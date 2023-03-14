@@ -1,10 +1,10 @@
-import data from '@emoji-mart/data'
-import { Node, mergeAttributes } from '@tiptap/core'
+import data from '@emoji-mart/data';
+import { mergeAttributes, Node } from '@tiptap/core';
 import { ReactRenderer } from '@tiptap/react';
 import Suggestion, { SuggestionKeyDownProps } from '@tiptap/suggestion';
-import { init } from 'emoji-mart'
-import EmojiPicker from './EmojiFinder';
+import { init } from 'emoji-mart';
 import tippy, { GetReferenceClientRect } from 'tippy.js';
+import EmojiPicker from './EmojiFinder';
 
 init(data);
 
@@ -14,23 +14,22 @@ export const suggestion = {
   // },
   char: ':',
   render: () => {
-    let component: any
-    let popup: any
+    let component: any;
+    let popup: any;
 
     return {
       onStart: (props: any) => {
         // console.log('rendering emoji picker', props)
-        if(!props.editor.isFocused) {
+        if (!props.editor.isFocused) {
           return;
         }
         component = new ReactRenderer(EmojiPicker, {
           props,
           editor: props.editor,
-        })
-        
+        });
 
         if (!props.clientRect) {
-          return
+          return;
         }
 
         popup = tippy('body', {
@@ -41,40 +40,40 @@ export const suggestion = {
           interactive: true,
           trigger: 'manual',
           placement: 'bottom-start',
-        })
+        });
       },
 
       onUpdate(props: any) {
-        console.log('onUpdate', props, component)
-        component.updateProps(props)
+        console.log('onUpdate', props, component);
+        component.updateProps(props);
 
         if (!props.clientRect) {
-          return
+          return;
         }
 
         popup[0].setProps({
           getReferenceClientRect: props.clientRect,
-        })
+        });
       },
 
       onKeyDown(props: SuggestionKeyDownProps) {
         if (props.event.key === 'Escape') {
-          popup[0].hide()
+          popup[0].hide();
 
-          return true
+          return true;
         }
 
-        return component.ref?.onKeyDown(props)
+        return component.ref?.onKeyDown(props);
       },
 
       onExit() {
-        console.log('onExit', component, popup)
-        popup[0].destroy()
-        component.destroy()
+        console.log('onExit', component, popup);
+        popup[0].destroy();
+        component.destroy();
       },
-    }
+    };
   },
-}
+};
 
 // a custom tiptap node that renders an emoji using the emoji-mart `em-emoji` web component
 export default Node.create({
@@ -93,13 +92,13 @@ export default Node.create({
       skin: {
         default: null,
       },
-    }
+    };
   },
 
   addOptions() {
     return {
       suggestion: suggestion,
-    }
+    };
   },
 
   parseHTML() {
@@ -107,7 +106,7 @@ export default Node.create({
       {
         tag: 'em-emoji',
       },
-    ]
+    ];
   },
 
   renderHTML({ HTMLAttributes }) {
@@ -115,7 +114,7 @@ export default Node.create({
       // set: 'apple',
       // size: '2em',
     });
-    return ['em-emoji', attributes]
+    return ['em-emoji', attributes];
   },
 
   addProseMirrorPlugins() {
@@ -125,34 +124,44 @@ export default Node.create({
         command: ({ editor, range, props }) => {
           // increase range.to by one when the next node is of type "text"
           // and starts with a space character
-          const nodeBefore = editor.view.state.selection.$from.nodeBefore
-          const nodeAfter = editor.view.state.selection.$to.nodeAfter
-          const overrideSpace = nodeAfter?.text?.startsWith(' ')
+          const nodeBefore = editor.view.state.selection.$from.nodeBefore;
+          const nodeAfter = editor.view.state.selection.$to.nodeAfter;
+          const overrideSpace = nodeAfter?.text?.startsWith(' ');
 
           if (overrideSpace) {
-            range.to += 1
+            range.to += 1;
           }
-          
-          console.log('command', editor, range, props, nodeBefore, nodeAfter, overrideSpace)
 
-          editor.chain().focus()
-          .insertContentAt(range, {
-            type: this.name,
-            attrs: props,
-          })      
-          .run()
+          console.log(
+            'command',
+            editor,
+            range,
+            props,
+            nodeBefore,
+            nodeAfter,
+            overrideSpace,
+          );
 
-          window.getSelection()?.collapseToEnd()
+          editor
+            .chain()
+            .focus()
+            .insertContentAt(range, {
+              type: this.name,
+              attrs: props,
+            })
+            .run();
+
+          window.getSelection()?.collapseToEnd();
         },
         allow: ({ state, range }) => {
-          const $from = state.doc.resolve(range.from)
-          const type = state.schema.nodes[this.name]
-          const allow = !!$from.parent.type.contentMatch.matchType(type)
+          const $from = state.doc.resolve(range.from);
+          const type = state.schema.nodes[this.name];
+          const allow = !!$from.parent.type.contentMatch.matchType(type);
 
-          return allow
+          return allow;
         },
         ...this.options.suggestion,
       }),
-    ]
+    ];
   },
-})
+});

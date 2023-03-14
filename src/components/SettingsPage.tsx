@@ -1,18 +1,18 @@
-import * as React from 'react';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
+import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import * as React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import WikiSpacePermissionSettings from './PermissionSettings';
-import { Stack } from '@mui/material';
 
 const tabs = [
   {
-    label: "Permissions",
-    path: "permissions",
-    component: <WikiSpacePermissionSettings />
+    label: 'Permissions',
+    path: 'permissions',
+    component: <WikiSpacePermissionSettings />,
   },
-]
+];
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -31,11 +31,12 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`settings-tab-${tabPath}`}
       {...other}
     >
-      {value === tabPath && (
-        // <Box sx={{ p: 3 }}>
+      {
+        value === tabPath &&
+          // <Box sx={{ p: 3 }}>
           children
         // </Box>
-      )}
+      }
     </div>
   );
 }
@@ -55,16 +56,27 @@ export default function WikiSpaceSettingsPage() {
 
   const params = useParams();
 
-  console.log('switching to', params)
+  console.log('switching to', params);
 
   return (
     <Stack>
       {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}> */}
-        <Tabs onChange={handleChange} style={{display: 'none'}} aria-label="basic tabs example" value={params['*']!}>
-          {tabs.map(({ label, path }, key) => <Tab key={key} value={path} label={label!} {...a11yProps(key)} />)}
-        </Tabs>
+      <Tabs
+        onChange={handleChange}
+        style={{ display: 'none' }}
+        aria-label="basic tabs example"
+        value={params['*']!}
+      >
+        {tabs.map(({ label, path }, key) => (
+          <Tab key={key} value={path} label={label!} {...a11yProps(key)} />
+        ))}
+      </Tabs>
       {/* </Box> */}
-      {tabs.map(({ label, path, component }, key) => <TabPanel value={params['*']!} tabPath={path!} key={key}>{component}</TabPanel>)}
+      {tabs.map(({ label, path, component }, key) => (
+        <TabPanel value={params['*']!} tabPath={path!} key={key}>
+          {component}
+        </TabPanel>
+      ))}
     </Stack>
   );
 }

@@ -1,14 +1,22 @@
 // a HHS space for storing the available wiki spaces and configuring them
 //
 
-import { Hash, HashedObject, Mesh, MutableArray, Resources, Store, WebWorkerMeshProxy, WorkerSafeIdbBackend } from "@hyper-hyper-space/core";
+import {
+  Hash,
+  HashedObject,
+  Mesh,
+  MutableArray,
+  Resources,
+  Store,
+  WebWorkerMeshProxy,
+  WorkerSafeIdbBackend,
+} from '@hyper-hyper-space/core';
 
 class Launcher extends HashedObject {
-  static className = "hyper-browser-web/Launcher";
-  static version = "1.0.0";
+  static className = 'hyper-browser-web/Launcher';
+  static version = '1.0.0';
 
   spaces?: MutableArray<Hash>;
-
 
   // constructor() {
   //   super();
@@ -28,7 +36,7 @@ class Launcher extends HashedObject {
   }
 
   static async initSpaceStore(
-    spaceEntryPoint: HashedObject | Hash
+    spaceEntryPoint: HashedObject | Hash,
   ): Promise<Store> {
     const spaceEntryPointHash =
       spaceEntryPoint instanceof HashedObject
@@ -36,7 +44,7 @@ class Launcher extends HashedObject {
         : spaceEntryPoint;
 
     const backend = new WorkerSafeIdbBackend(
-      Launcher.backendNameForSpace(spaceEntryPointHash)
+      Launcher.backendNameForSpace(spaceEntryPointHash),
     );
 
     const store = new Store(backend);
@@ -49,33 +57,29 @@ class Launcher extends HashedObject {
   }
 
   static async initSpaceMesh(spaceHash: Hash): Promise<Mesh> {
-      const worker = new Worker(new URL('./mesh.worker', import.meta.url));
+    const worker = new Worker(new URL('./mesh.worker', import.meta.url));
 
-      const webWorkerMesh = new WebWorkerMeshProxy(worker);
-  
-      await webWorkerMesh.ready; // The MeshHost in the web worker will send a message once it is fully
-                                 // operational. We don't want to send any control messages before that,
-                                 // so we'll wait here until we get the 'go' message from the MeshHost.
+    const webWorkerMesh = new WebWorkerMeshProxy(worker);
 
-      const mesh = webWorkerMesh.getMesh();
+    await webWorkerMesh.ready; // The MeshHost in the web worker will send a message once it is fully
+    // operational. We don't want to send any control messages before that,
+    // so we'll wait here until we get the 'go' message from the MeshHost.
 
-      return mesh;
+    const mesh = webWorkerMesh.getMesh();
+
+    return mesh;
   }
 
   static async initSpaceResources(
-    spaceEntryPoint: HashedObject | Hash
+    spaceEntryPoint: HashedObject | Hash,
   ): Promise<Resources> {
     const spaceEntryPointHash =
       spaceEntryPoint instanceof HashedObject
         ? spaceEntryPoint.getLastHash()
         : spaceEntryPoint;
 
-    const mesh = await Launcher.initSpaceMesh(
-      spaceEntryPointHash
-    );
-    const store = await Launcher.initSpaceStore(
-      spaceEntryPoint
-    );
+    const mesh = await Launcher.initSpaceMesh(spaceEntryPointHash);
+    const store = await Launcher.initSpaceStore(spaceEntryPoint);
 
     const resources = await Resources.create({ mesh: mesh, store: store });
 

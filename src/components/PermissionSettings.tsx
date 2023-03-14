@@ -1,34 +1,60 @@
+import { useObjectState } from '@hyper-hyper-space/react';
+import {
+  Box,
+  Chip,
+  Divider,
+  FormControl,
+  IconButton,
+  InputLabel,
+  Link,
+  List,
+  ListItem,
+  ListItemButton,
+  MenuItem,
+  Paper,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material';
 import * as React from 'react';
-import { Box, Chip, Divider, FormControl, IconButton, InputLabel, Link, List, ListItem, ListItemButton, MenuItem, Paper, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { useOutletContext } from 'react-router';
 import { WikiContext } from './WikiSpaceView';
-import { useObjectState } from '@hyper-hyper-space/react';
 
-import { PermFlag, PermFlagEveryone, PermFlagMembers, PermFlagModerators, PermFlagOwners } from '@hyper-hyper-space/wiki-collab';
+import {
+  PermFlag,
+  PermFlagEveryone,
+  PermFlagMembers,
+  PermFlagModerators,
+  PermFlagOwners,
+} from '@hyper-hyper-space/wiki-collab';
 // import ContactSelectorDialog from '@hyper-hyper-space/hyper-browser-web/home/components/ContactSelectorDialog';
 import { CausalSet, Identity } from '@hyper-hyper-space/core';
 // import { Contact, ProfileUtils } from '../../../model/ProfileUtils';
 // import ContactListDisplay from '../../home/components/ContactListDisplay';
-import { AdminPanelSettings, SupervisedUserCircle, LockPerson, Public } from '@mui/icons-material';
-import Menu from '@mui/material/Menu';
+import {
+  AdminPanelSettings,
+  LockPerson,
+  Public,
+  SupervisedUserCircle,
+} from '@mui/icons-material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import Menu from '@mui/material/Menu';
 import { size, sortBy } from 'lodash-es';
 // import InfoDialog from '../../../components/InfoDialog';
 import { MemberInfo, ReadInfo, WriteInfo } from './InfoTips';
-
 
 const ITEM_HEIGHT = 48;
 const ADD_TO_MODERATORS = 'Add to moderators';
 const REMOVE_FROM_MODERATORS = 'Remove from moderators';
 const REMOVE_FROM_MEMBERS = 'Remove from members';
 
-export function MemberActionMenu(props: {memberId: Identity}) {
-  const {memberId} = props
+export function MemberActionMenu(props: { memberId: Identity }) {
+  const { memberId } = props;
   const { spaceContext, wiki } = useOutletContext<WikiContext>();
   const author = spaceContext?.launcher?.getAuthor();
-  const membersState = useObjectState(wiki?.permissionLogic?.members)
-  const moderatorsState = useObjectState(wiki?.permissionLogic?.moderators)
-  const owners = wiki.owners!
+  const membersState = useObjectState(wiki?.permissionLogic?.members);
+  const moderatorsState = useObjectState(wiki?.permissionLogic?.moderators);
+  const owners = wiki.owners!;
 
   const generateMemberActions = async () => {
     const actions: { [key: string]: Function } = {};
@@ -55,7 +81,10 @@ export function MemberActionMenu(props: {memberId: Identity}) {
       };
     }
 
-    const canRemoveFromMembers = await membersState?.value?.canDelete(memberId, author);
+    const canRemoveFromMembers = await membersState?.value?.canDelete(
+      memberId,
+      author,
+    );
 
     if (canRemoveFromMembers) {
       actions[REMOVE_FROM_MEMBERS] = () => {
@@ -69,15 +98,19 @@ export function MemberActionMenu(props: {memberId: Identity}) {
     return actions;
   };
 
-  const [actions, setActions] = React.useState<{[key: string]: Function | null}>({})
+  const [actions, setActions] = React.useState<{
+    [key: string]: Function | null;
+  }>({});
   React.useEffect(() => {
-    let cancel = false
+    let cancel = false;
     generateMemberActions().then(memberActions => {
       if (cancel) return;
-      setActions(memberActions)
-    })
-    return () => { cancel = true }
-  }, [moderatorsState])
+      setActions(memberActions);
+    });
+    return () => {
+      cancel = true;
+    };
+  }, [moderatorsState]);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -90,16 +123,18 @@ export function MemberActionMenu(props: {memberId: Identity}) {
 
   return (
     <div>
-      {size(actions) > 0 && <IconButton
-        aria-label="more"
-        id="member-action-button"
-        aria-controls={open ? 'member-actions' : undefined}
-        aria-expanded={open ? 'true' : undefined}
-        aria-haspopup="true"
-        onClick={handleClick}
-      >
-        <MoreVertIcon />
-      </IconButton>}
+      {size(actions) > 0 && (
+        <IconButton
+          aria-label="more"
+          id="member-action-button"
+          aria-controls={open ? 'member-actions' : undefined}
+          aria-expanded={open ? 'true' : undefined}
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
+          <MoreVertIcon />
+        </IconButton>
+      )}
       <Menu
         id="member-actions"
         MenuListProps={{
@@ -115,10 +150,13 @@ export function MemberActionMenu(props: {memberId: Identity}) {
         }}
       >
         {Object.entries(actions).map(([action, handler]) => (
-          <MenuItem key={action} onClick={() => {
-            handler && handler()
-            handleClose()
-          }}>
+          <MenuItem
+            key={action}
+            onClick={() => {
+              handler && handler();
+              handleClose();
+            }}
+          >
             {action}
           </MenuItem>
         ))}
@@ -127,102 +165,123 @@ export function MemberActionMenu(props: {memberId: Identity}) {
   );
 }
 
-function PermFlagToggle(props: { flag: CausalSet<PermFlag>, name: String, info?: JSX.Element }) {
+function PermFlagToggle(props: {
+  flag: CausalSet<PermFlag>;
+  name: string;
+  info?: JSX.Element;
+}) {
   const { spaceContext } = useOutletContext<WikiContext>();
   const flagState = useObjectState(props.flag);
   const author = spaceContext?.launcher?.getAuthor();
   const [infoTipOpen, setInfoTipOpen] = React.useState(false);
 
-  const handleChange = async (
-    event: SelectChangeEvent,
-  ) => {
+  const handleChange = async (event: SelectChangeEvent) => {
     const flag = event.target.value;
     // could be nice if there was a better way to do this!
     if (flag === PermFlagEveryone) {
       await flagState?.getValue()?.add(PermFlagEveryone, author);
       await flagState?.getValue()?.delete(PermFlagMembers, author);
       await flagState?.getValue()?.delete(PermFlagModerators, author);
-      await flagState?.getValue()?.save()
+      await flagState?.getValue()?.save();
       // console.log('wiki permissions set', props.name, [...flagState?.getValue()?.values()!])
     } else if (flag === PermFlagMembers) {
       await flagState?.getValue()?.delete(PermFlagEveryone, author);
       await flagState?.getValue()?.add(PermFlagMembers, author);
       await flagState?.getValue()?.delete(PermFlagModerators, author);
-      await flagState?.getValue()?.save()
+      await flagState?.getValue()?.save();
       // console.log('wiki permissions set', props.name, [...flagState?.getValue()?.values()!])
     } else if (flag === PermFlagModerators) {
       await flagState?.getValue()?.delete(PermFlagEveryone, author);
       await flagState?.getValue()?.delete(PermFlagMembers, author);
       await flagState?.getValue()?.add(PermFlagModerators, author);
-      await flagState?.getValue()?.save()
+      await flagState?.getValue()?.save();
       // console.log('wiki permissions set', props.name, [...flagState?.getValue()?.values()!])
     } else if (flag === PermFlagOwners) {
       await flagState?.getValue()?.delete(PermFlagEveryone, author);
       await flagState?.getValue()?.delete(PermFlagMembers, author);
       await flagState?.getValue()?.delete(PermFlagModerators, author);
-      await flagState?.getValue()?.save()
+      await flagState?.getValue()?.save();
       // console.log('wiki permissions set', props.name, [...flagState?.getValue()?.values()!])
     }
   };
-  const flag =
-    flagState?.getValue()?.has(PermFlagEveryone) ? PermFlagEveryone :
-    flagState?.getValue()?.has(PermFlagMembers) ? PermFlagMembers :
-    flagState?.getValue()?.has(PermFlagModerators) ? PermFlagModerators :
-    PermFlagOwners
+  const flag = flagState?.getValue()?.has(PermFlagEveryone)
+    ? PermFlagEveryone
+    : flagState?.getValue()?.has(PermFlagMembers)
+    ? PermFlagMembers
+    : flagState?.getValue()?.has(PermFlagModerators)
+    ? PermFlagModerators
+    : PermFlagOwners;
 
-  const statusText = ( props.info ?
+  const statusText = props.info ? (
     <Typography>
-      Who can <Link component="button" variant="body1" onClick={() => setInfoTipOpen(true)}>{ props.name }</Link>:
+      Who can{' '}
+      <Link
+        component="button"
+        variant="body1"
+        onClick={() => setInfoTipOpen(true)}
+      >
+        {props.name}
+      </Link>
+      :
       {/* <InfoDialog content={props.info!} title={`Who can ${props.name}?`} open={infoTipOpen} onClose={() => setInfoTipOpen(false)}/> */}
-    </Typography> :
-    <Typography>
-      Who can { props.name}:
-    </Typography> 
-  )
+    </Typography>
+  ) : (
+    <Typography>Who can {props.name}:</Typography>
+  );
   return (
     <>
-        { statusText }
+      {statusText}
       <FormControl fullWidth>
-        <Select
-          value={flag}
-          onChange={handleChange}
-        >
+        <Select value={flag} onChange={handleChange}>
           <MenuItem value={PermFlagEveryone}>Everybody</MenuItem>
           <MenuItem value={PermFlagMembers}>Members</MenuItem>
           <MenuItem value={PermFlagModerators}>Moderators</MenuItem>
           <MenuItem value={PermFlagOwners}>Owners</MenuItem>
         </Select>
       </FormControl>
-      { flag === PermFlagEveryone ? <Public/> :
-        flag === PermFlagMembers ? <SupervisedUserCircle/> : 
-        flag === PermFlagModerators ? <AdminPanelSettings/> : 
-        flag === PermFlagOwners ? <LockPerson/> : 
-        <LockPerson/> 
-      }
+      {flag === PermFlagEveryone ? (
+        <Public />
+      ) : flag === PermFlagMembers ? (
+        <SupervisedUserCircle />
+      ) : flag === PermFlagModerators ? (
+        <AdminPanelSettings />
+      ) : flag === PermFlagOwners ? (
+        <LockPerson />
+      ) : (
+        <LockPerson />
+      )}
     </>
   );
 }
 
 function MemberList() {
   const { wiki } = useOutletContext<WikiContext>();
-  const membersState = useObjectState(wiki?.permissionLogic?.members)
-  const moderatorsState = useObjectState(wiki?.permissionLogic?.moderators)
-  const owners = wiki.owners!
+  const membersState = useObjectState(wiki?.permissionLogic?.members);
+  const moderatorsState = useObjectState(wiki?.permissionLogic?.moderators);
+  const owners = wiki.owners!;
   const [infoTipOpen, setInfoTipOpen] = React.useState(false);
 
-  return <Box>
-    <Link component="button" variant="overline" onClick={() => setInfoTipOpen(true)}>Members</Link>
-    {/* <InfoDialog content={MemberInfo} title={`Who are members?`} open={infoTipOpen} onClose={() => setInfoTipOpen(false)}/> */}
-    <Divider/>
+  return (
     <Box>
-      <List>
-        {[...owners.values()!].map(id =>
-          <ListItem key={id.getLastHash()!}>
-            {/* <ContactListDisplay contact={ProfileUtils.createContact(id)!} chips={[
+      <Link
+        component="button"
+        variant="overline"
+        onClick={() => setInfoTipOpen(true)}
+      >
+        Members
+      </Link>
+      {/* <InfoDialog content={MemberInfo} title={`Who are members?`} open={infoTipOpen} onClose={() => setInfoTipOpen(false)}/> */}
+      <Divider />
+      <Box>
+        <List>
+          {[...owners.values()!].map(id => (
+            <ListItem key={id.getLastHash()!}>
+              {/* <ContactListDisplay contact={ProfileUtils.createContact(id)!} chips={[
               <Chip size="small" label="Owner" color="primary" icon={<LockPerson/>}/>
             ]}/> */}
-          </ListItem>)}
-        {/* {sortBy([...membersState?.value?.values()!], [
+            </ListItem>
+          ))}
+          {/* {sortBy([...membersState?.value?.values()!], [
           // id => moderatorsState?.value?.has(id) ? -1 : 1,
           id => ProfileUtils.createContact(id).name,
         ]).map(id => {
@@ -235,27 +294,39 @@ function MemberList() {
           </ListItemButton>
         }
           )} */}
-      </List>
+        </List>
+      </Box>
     </Box>
-  </Box>
+  );
 }
 
 export default function WikiSpacePermissionSettings() {
   const { spaceContext, wiki } = useOutletContext<WikiContext>();
-  const membersState = useObjectState(wiki?.permissionLogic?.members)
-  const owners = wiki.owners!
-  const ids = [...owners.values()!, ...membersState?.value?.values()!] 
-  
-  console.log("IDs", ids)
+  const membersState = useObjectState(wiki?.permissionLogic?.members);
+  const owners = wiki.owners!;
+  const ids = [...owners.values()!, ...membersState?.value?.values()!];
+
+  console.log('IDs', ids);
 
   return (
     <Box sx={{ p: 3 }}>
-    {/* <Typography variant="overline">Permissions</Typography>
+      {/* <Typography variant="overline">Permissions</Typography>
     <Divider/> */}
       <Box sx={{ m: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'max-content max-content auto', alignItems: "center", gap: "1em" }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'max-content max-content auto',
+            alignItems: 'center',
+            gap: '1em',
+          }}
+        >
           {/* <PermFlagToggle flag={wiki.permissionLogic?.readConfig!} name='read' info={ReadInfo} /> */}
-          <PermFlagToggle flag={wiki.permissionLogic?.writeConfig!} name='write' info={WriteInfo} />
+          <PermFlagToggle
+            flag={wiki.permissionLogic?.writeConfig!}
+            name="write"
+            info={WriteInfo}
+          />
         </div>
       </Box>
       <MemberList />

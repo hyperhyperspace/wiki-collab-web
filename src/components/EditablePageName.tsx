@@ -1,12 +1,12 @@
 // a react component for `WikiPage` name display and editing
 
-import { useObjectState } from "@hyper-hyper-space/react";
-import { Page, PageArray } from "@hyper-hyper-space/wiki-collab";
-import React, { useState, useEffect } from "react";
-import { useOutletContext, useParams } from "react-router";
-import { WikiContext } from "./WikiSpaceView";
-import { MutationEvent } from "@hyper-hyper-space/core";
-import { Input, Typography } from "@mui/material";
+import { MutationEvent } from '@hyper-hyper-space/core';
+import { useObjectState } from '@hyper-hyper-space/react';
+import { Page, PageArray } from '@hyper-hyper-space/wiki-collab';
+import { Input, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useOutletContext, useParams } from 'react-router';
+import { WikiContext } from './WikiSpaceView';
 
 const WikiSpaceEditablePageName = (props: {}) => {
   // const [name, setName] = useState(props.page.name);
@@ -18,7 +18,7 @@ const WikiSpaceEditablePageName = (props: {}) => {
 
   const pageArrayState = useObjectState<PageArray>(wiki?.pages, {
     filterMutations: (ev: MutationEvent) =>
-      [...wiki.pages?.values()!].map((page) => page.name).includes(ev.emitter),
+      [...wiki.pages?.values()!].map(page => page.name).includes(ev.emitter),
     debounceFreq: 50,
   });
   const [pages, setPages] = useState<Page[]>([]);
@@ -29,14 +29,19 @@ const WikiSpaceEditablePageName = (props: {}) => {
   useEffect(() => {
     setPages(
       [...pageArrayState?.getValue()?.values()!].filter(
-        (p) => p?.name?.getValue() === pageName
-      )
+        p => p?.name?.getValue() === pageName,
+      ),
     );
   }, [pageArrayState, pageName]);
 
-  pageArrayState?.getValue()?.values().next()?.value?.canUpdate(selfAuthor)!.then((canUpdate: boolean) => {
+  pageArrayState
+    ?.getValue()
+    ?.values()
+    .next()
+    ?.value?.canUpdate(selfAuthor)!
+    .then((canUpdate: boolean) => {
       setCanEdit(canUpdate);
-  });
+    });
 
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -44,23 +49,23 @@ const WikiSpaceEditablePageName = (props: {}) => {
     <Typography
       ref={inputRef}
       variant="h4"
-      style={{ padding: "0.25rem"}}
+      style={{ padding: '0.25rem' }}
       fontWeight="bold"
       align="center"
       suppressContentEditableWarning={true}
       contentEditable={canEdit}
-      onBlur={async (e) => {
+      onBlur={async e => {
         const pendingName = inputRef.current?.innerText;
         if (!pendingName || pendingName?.length === 0) {
-            return;
+          return;
         }
 
         nav.goToPage(pendingName);
         await Promise.all(
-          pages.map(async (page) => {
+          pages.map(async page => {
             page.name?.setValue(pendingName);
             await page.name?.save();
-          })
+          }),
         );
 
         // console.log(
@@ -68,12 +73,14 @@ const WikiSpaceEditablePageName = (props: {}) => {
         //   "preparing to navigate..."
         // );
       }}
-      onKeyPress={(e) => {
-        if (e.key === "Enter") {
+      onKeyPress={e => {
+        if (e.key === 'Enter') {
           inputRef.current?.blur();
         }
       }}
-    >{pageName}</Typography>
+    >
+      {pageName}
+    </Typography>
   );
 };
 

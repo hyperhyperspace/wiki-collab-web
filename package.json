@@ -66,6 +66,7 @@
     "@typescript-eslint/parser": "^5.55.0",
     "eslint": "^8.36.0",
     "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^5.0.0-next-56a3c18e5-20230314",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.4",
@@ -102,10 +103,10 @@
     "@types/react-dom": "17.0.9"
   },
   "husky": {
-		  "hooks": {
-		    "pre-commit": "lint-staged"
-		  }
-		},
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "lint-staged": {
     "*.{ts,tsx}": [
       "prettier --write",
@@ -118,4 +119,3 @@
     ]
   }
 }
-

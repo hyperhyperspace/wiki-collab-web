@@ -21,5 +21,7 @@ module.exports = {
     ],
     "rules": {
         "no-console": "off",
+	"@typescript-eslint/no-explicit-any": "warn",
+	"react/react-in-jsx-scope": "off"
     }
 }

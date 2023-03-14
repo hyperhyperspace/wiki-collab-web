@@ -1,9 +1,11 @@
-.editable-tab .material-icons, .editable-tab .delete-page {
+.editable-tab .material-icons,
+.editable-tab .delete-page {
   opacity: 0;
   line-height: default;
 }
 
-.editable-tab:hover .material-icons, .editable-tab:hover .delete-page {
+.editable-tab:hover .material-icons,
+.editable-tab:hover .delete-page {
   opacity: 1;
 }
 
@@ -11,21 +13,19 @@
   opacity: 1;
 }
 
-
 .editable-tab {
-    padding-left: 0
+  padding-left: 0;
 }
 .editable-tab .material-icons {
-
   margin: 0.1rem;
   color: grey;
 }
 
 .currently-selected {
-    font-weight: bold !important;
+  font-weight: bold !important;
 }
 
 .page-tab p {
-    color: #1976d2;
-    /* font-weight: bold; */
+  color: #1976d2;
+  /* font-weight: bold; */
 }

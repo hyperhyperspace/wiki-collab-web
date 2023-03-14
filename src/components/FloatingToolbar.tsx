@@ -1,16 +1,22 @@
 import { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-import { useFloating, shift, offset, inline } from '@floating-ui/react-dom';
 import { autoPlacement } from '@floating-ui/dom';
+import { inline, offset, shift, useFloating } from '@floating-ui/react-dom';
 
 import { posToDOMRect } from '@tiptap/core';
-import { debounce } from 'lodash';
 import { Editor } from '@tiptap/react';
+import { debounce } from 'lodash';
 
 import BlockToolbar from './BlockToolbar';
 
-export const FloatingToolbar = ({ editor, isEditing }: {editor: Editor, isEditing: Boolean}) => {
+export const FloatingToolbar = ({
+  editor,
+  isEditing,
+}: {
+  editor: Editor;
+  isEditing: boolean;
+}) => {
   const { x, y, reference, floating, strategy, update } = useFloating({
     placement: 'top',
     middleware: [
@@ -28,14 +34,14 @@ export const FloatingToolbar = ({ editor, isEditing }: {editor: Editor, isEditin
       'selectionUpdate',
       debounce(() => {
         update();
-      }, 100)
+      }, 100),
     );
   }, []);
 
   if (!editor) {
-    return <></>
+    return <></>;
   }
-  
+
   const { state, view } = editor;
   const { from, to } = state.selection;
   const isCollapsed = to - from <= 0;
@@ -48,7 +54,7 @@ export const FloatingToolbar = ({ editor, isEditing }: {editor: Editor, isEditin
   if (width === 0) {
     return null;
   }
-  return (!editor.state.selection.empty && isEditing) ? (
+  return !editor.state.selection.empty && isEditing ? (
     <div hidden={editor.state.selection.empty}>
       {ReactDOM.createPortal(
         <div
@@ -64,7 +70,7 @@ export const FloatingToolbar = ({ editor, isEditing }: {editor: Editor, isEditin
         >
           &#160;
         </div>,
-        document.body
+        document.body,
       )}
       <div>
         {!isCollapsed &&
@@ -76,18 +82,20 @@ export const FloatingToolbar = ({ editor, isEditing }: {editor: Editor, isEditin
                 top: y || '',
                 left: x || '',
               }}
-              onMouseDownCapture={(e) => {
+              onMouseDownCapture={e => {
                 e.preventDefault();
               }}
-              onPointerDownCapture={(e) => {
+              onPointerDownCapture={e => {
                 e.preventDefault();
               }}
             >
-                <BlockToolbar editor={editor}/>
+              <BlockToolbar editor={editor} />
             </div>,
-            document.body
+            document.body,
           )}
       </div>
     </div>
-  ) : <></>;
+  ) : (
+    <></>
+  );
 };
