@@ -179,9 +179,11 @@ function Navigation(props: { width: string; redirect?: boolean }) {
   useEffect(() => {
     if (props.redirect) {
       if (pageArrayState?.getValue()?.size() || 0 > 0) {
-        nav.goToPage(
-          pageArrayState?.getValue()?.values().next().value.name?.getValue(),
-        );
+        const pageName = pageArrayState?.getValue()?.values().next().value.name?.getValue()
+        if(pageName) {
+          console.log('redirecting to page', pageName, pageArrayState?.getValue()?.values().next().value.name?.getValue())
+          nav.goToPage(pageName);
+        }
       }
     }
   }, [pageArrayState]);

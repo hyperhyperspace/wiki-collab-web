@@ -42,7 +42,7 @@ type WikiContext = {
 function WikiSpaceView(props: { entryPoint: WikiSpace; basePath?: string }) {
   const {author, resources} = useOutletContext<SpaceContext>();
   console.log('WikiSpaceView', author, resources, props.entryPoint)
-  const { basePath } = { basePath: '/?' };
+  const { basePath } = { basePath: '' };
 
   const wiki = props.entryPoint;
 
@@ -59,23 +59,23 @@ function WikiSpaceView(props: { entryPoint: WikiSpace; basePath?: string }) {
 
   const goToPage = (pageName: string) => {
     navigate(
-        basePath +
-        '/contents/' +
+        // basePath +
+        'contents/' +
         encodeURIComponent(pageName),
     );
   };
 
   const goToAddPage = () => {
-    navigate(basePath + '/add-page');
+    navigate('add-page');
   };
 
   const goToIndex = () => {
-    navigate(basePath + '/index');
+    navigate('index');
   };
 
   const goToPermissionSettings = () => {
     navigate(
-        basePath + '/settings/permissions',
+        'settings/permissions',
     );
   };
 
