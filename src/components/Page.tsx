@@ -28,12 +28,13 @@ import {
 import { useOutletContext } from 'react-router';
 import WikiSpaceBlock from './Block';
 import { WikiContext } from './WikiSpaceView';
+import { SpaceContext } from '../pages/SpaceFrame';
 
 function WikiSpacePage(props: { page: Page }) {
   // const { pageName } = useParams();
   const { page } = props;
-  const { wiki, spaceContext } = useOutletContext<WikiContext>();
-  const { launcher } = spaceContext;
+  const { wiki } = useOutletContext<WikiContext>();
+  const { launcher } = useOutletContext<SpaceContext>();
 
   const wikiTitleState = useObjectState<WikiSpace>(wiki, {
     filterMutations: (ev: MutationEvent) => ev.emitter === wiki?.title,

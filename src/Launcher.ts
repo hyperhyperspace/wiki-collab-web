@@ -2,6 +2,7 @@
 //
 
 import {
+  ClassRegistry,
   Hash,
   HashedObject,
   Mesh,
@@ -11,24 +12,27 @@ import {
   WebWorkerMeshProxy,
   WorkerSafeIdbBackend,
 } from '@hyper-hyper-space/core';
+import { WikiSpace } from '@hyper-hyper-space/wiki-collab';
 
 class Launcher extends HashedObject {
   static className = 'hyper-browser-web/Launcher';
   static version = '1.0.0';
 
-  spaces?: MutableArray<Hash>;
+  spaces?: MutableArray<WikiSpace>;
 
-  // constructor() {
-  //   super();
-  // }
+  constructor() {
+    super();
+    this.setId('wiki-launcher');
+    this.addDerivedField('spaces', new MutableArray<WikiSpace>());
+  }
 
   getClassName(): string {
     return Launcher.className;
   }
 
   init(): void {
-    this.setRandomId();
-    this.addDerivedField('spaces', new MutableArray());
+    // console.log('init launcher')
+    // this.setRandomId();
   }
 
   static backendNameForSpace(space: Hash): string {
@@ -92,5 +96,7 @@ class Launcher extends HashedObject {
     return true;
   }
 }
+
+ClassRegistry.register(Launcher.className, Launcher);
 
 export default Launcher;

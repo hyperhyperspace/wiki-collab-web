@@ -23,6 +23,7 @@ import NewPage from './NewPage';
 import WikiSpacePagesForRoute from './PagesForRoute';
 import WikiSpaceSettingsPage from './SettingsPage';
 import './WikiSpaceView.css';
+import { Identity, Resources } from '@hyper-hyper-space/core';
 
 type WikiNav = {
   goToPage: (pageName: string) => void;
@@ -34,11 +35,15 @@ type WikiNav = {
 type WikiContext = {
   wiki: WikiSpace;
   nav: WikiNav;
-  spaceContext: SpaceContext;
+  resources: Resources;
+  author: Identity;
 };
 
-function WikiSpaceView(props: { entryPoint: WikiSpace; path?: string }) {
-  const spaceContext = useOutletContext<SpaceContext>();
+function WikiSpaceView(props: { entryPoint: WikiSpace; basePath?: string }) {
+  const {author, resources} = useOutletContext<SpaceContext>();
+  console.log('WikiSpaceView', author, resources, props.entryPoint)
+  const { basePath } = { basePath: '/?' };
+
   const wiki = props.entryPoint;
 
   useEffect(() => {
@@ -54,39 +59,39 @@ function WikiSpaceView(props: { entryPoint: WikiSpace; path?: string }) {
 
   const goToPage = (pageName: string) => {
     navigate(
-      '/space/' +
-        encodeURIComponent(wiki.getLastHash()) +
+        basePath +
         '/contents/' +
         encodeURIComponent(pageName),
     );
   };
 
   const goToAddPage = () => {
-    navigate('/space/' + encodeURIComponent(wiki.getLastHash()) + '/add-page');
+    navigate(basePath + '/add-page');
   };
 
   const goToIndex = () => {
-    navigate('/space/' + encodeURIComponent(wiki.getLastHash()) + '/index');
+    navigate(basePath + '/index');
   };
 
   const goToPermissionSettings = () => {
     navigate(
-      '/space/' +
-        encodeURIComponent(wiki.getLastHash()) +
-        '/settings/permissions',
+        basePath + '/settings/permissions',
     );
   };
 
   const context: WikiContext = {
     wiki: wiki,
+    resources: resources!,
+    author: author!,
     nav: {
       goToPage: goToPage,
       goToAddPage: goToAddPage,
       goToIndex: goToIndex,
       goToPermissionSettings,
     },
-    spaceContext: spaceContext,
   };
+
+  console.log('wiki context', context)
 
   const theme = useTheme();
   const tablet = useMediaQuery(theme.breakpoints.down('md'));

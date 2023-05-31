@@ -25,12 +25,13 @@ import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { debounce, map, mapValues } from 'lodash-es';
 import { lowlight } from 'lowlight/lib/all.js';
-import { useOutletContext } from 'react-router';
+import { useOutlet, useOutletContext } from 'react-router';
 import Emoji from './Emoji';
 import { FloatingToolbar } from './FloatingToolbar';
 import WikiLink from './Link';
 import { suggestion, WikiLinkSuggestion } from './LinkSuggestion';
 import { WikiContext } from './WikiSpaceView';
+import { SpaceContext } from '../pages/SpaceFrame';
 
 function classNames(classes: { [key: string]: boolean }) {
   return Object.entries(classes)
@@ -62,10 +63,9 @@ function WikiSpaceBlock(props: {
   focusOnBlockWithHash?: string;
   focusOnAdjacentBlock?: (block: Block, distance?: number) => void;
 }) {
-  const { spaceContext } = useOutletContext<WikiContext>();
-  const { launcher } = spaceContext;
+  // const { spaceContext } = useOutletContext<WikiContext>();
+  const { launcher, resources } = useOutletContext<SpaceContext>();
   const selfAuthor = launcher?.getAuthor()!;
-  const resources = spaceContext.resources;
   const blockState = useObjectState(props.block, { debounceFreq: 250 });
   const blockContentsState = useObjectState(props.block, { debounceFreq: 250 });
   const [rejectedEdit, setRejectedEdit] = useState<string>();

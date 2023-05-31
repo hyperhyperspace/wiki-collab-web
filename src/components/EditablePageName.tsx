@@ -7,13 +7,14 @@ import { Input, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useOutletContext, useParams } from 'react-router';
 import { WikiContext } from './WikiSpaceView';
+import { SpaceContext } from '../pages/SpaceFrame';
 
 const WikiSpaceEditablePageName = (props: {}) => {
   // const [name, setName] = useState(props.page.name);
   // const name = useObjectState(props.page.name)?.value?.getValue()!;
   const { pageName } = useParams();
-  const { wiki, nav, spaceContext } = useOutletContext<WikiContext>();
-  const { launcher } = spaceContext;
+  const { wiki, nav } = useOutletContext<WikiContext>();
+  const { launcher } = useOutletContext<SpaceContext>();
   const selfAuthor = launcher?.getAuthor();
 
   const pageArrayState = useObjectState<PageArray>(wiki?.pages, {

@@ -5,13 +5,12 @@ import App from './App';
 import './index.css';
 
 import {
-  Hash,
-  MutableArray,
+  Identity,
+  RSAKeyPair,
   Store,
   WorkerSafeIdbBackend,
 } from '@hyper-hyper-space/core';
 // import { HyperBrowserConfig } from './model/HyperBrowserConfig';
-import { Home } from '@hyper-hyper-space/home';
 import Launcher from './Launcher';
 
 const main = async () => {
@@ -30,10 +29,33 @@ const main = async () => {
   }
 
   const launcherStore = new Store(configBackend);
-
   const launcher = new Launcher();
   launcher.setStore(launcherStore);
+  // await launcher.loadAndWatchForChanges();
+  
+  console.log('Launcher loaded', launcher);
+
+  // launcher.init();
+  await launcherStore.load(launcher.getLastHash());
+  
+  if (!launcher.hasAuthor()) {
+    const kp = await RSAKeyPair.generate(2048);
+
+    const launcherAuthor = Identity.fromKeyPair({
+      name: 'Anonymous Author',
+    }, kp);
+    console.log('Generated launcher author', launcherAuthor);
+
+    launcher.setAuthor(launcherAuthor);
+    launcherStore.save(kp)
+    launcherStore.save(launcherAuthor)
+    launcher.save();
+  }
+
+  launcher.init();
   await launcherStore.save(launcher);
+  await launcher.loadAndWatchForChanges();
+  await launcher.spaces?.loadAndWatchForChanges();
 
   ReactDOM.render(
     <React.StrictMode>

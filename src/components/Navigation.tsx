@@ -29,6 +29,7 @@ import {
 import { useLocation, useOutletContext, useParams } from 'react-router';
 import './Navigation.css';
 import { WikiContext } from './WikiSpaceView';
+import { SpaceContext } from '../pages/SpaceFrame';
 
 function PageListItem(props: {
   page: Page;
@@ -40,8 +41,8 @@ function PageListItem(props: {
   const { pageName: pageNameFromRoute } = useParams();
   const pageName = useObjectState(page.name)?.getValue()?.getValue();
   const pageArrayState = useObjectState(pageArray);
-  const { nav, spaceContext } = useOutletContext<WikiContext>();
-  const { launcher } = spaceContext;
+  const { nav } = useOutletContext<WikiContext>();
+  const { launcher } = useOutletContext<SpaceContext>();
   return (
     <ListItemButton
       selected={pageNameFromRoute === pageName}
@@ -117,8 +118,9 @@ function PageListItem(props: {
 }
 
 function Navigation(props: { width: string; redirect?: boolean }) {
-  const { nav, wiki, spaceContext } = useOutletContext<WikiContext>();
-  const { launcher } = spaceContext;
+  const { nav, wiki } = useOutletContext<WikiContext>();
+  // console.log('wiki', wiki, 'nav', nav)
+  const { launcher } = useOutletContext<SpaceContext>();
   const { pageName } = useParams();
   const { pathname } = useLocation();
   const onSettingsPage = pathname.includes('/settings/');
@@ -149,7 +151,7 @@ function Navigation(props: { width: string; redirect?: boolean }) {
 
     pageArrayState
       ?.getValue()
-      ?.canInsert(undefined, 0, spaceContext?.launcher?.getAuthor())
+      ?.canInsert(undefined, 0, launcher?.getAuthor())
       .then((canInsert: boolean) => {
         if (cancel) return;
         setCanEditPageArray(canInsert);
@@ -158,7 +160,7 @@ function Navigation(props: { width: string; redirect?: boolean }) {
     return () => {
       cancel = true;
     };
-  }, [pageArrayState, spaceContext?.launcher]);
+  }, [pageArrayState, launcher]);
 
   const [filterText, setFilterText] = useState<string>('');
 

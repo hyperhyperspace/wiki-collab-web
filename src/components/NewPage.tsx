@@ -5,9 +5,11 @@ import * as React from 'react';
 
 import { useNavigate, useOutletContext } from 'react-router';
 import { WikiContext } from './WikiSpaceView';
+import { SpaceContext } from '../pages/SpaceFrame';
 
 function NewPage(props: { noNavigation: boolean; contentWidth: string }) {
-  const { wiki, nav, spaceContext } = useOutletContext<WikiContext>();
+  const { wiki, nav } = useOutletContext<WikiContext>();
+  const { launcher } = useOutletContext<SpaceContext>();
 
   const [name, setName] = useState('');
   const [nameError, setNameError] = useState(false);
@@ -33,7 +35,7 @@ function NewPage(props: { noNavigation: boolean; contentWidth: string }) {
       err = true;
     }
 
-    const author = spaceContext.launcher?.getAuthor();
+    const author = launcher?.getAuthor();
 
     if (author === undefined) {
       // TODO: make an actual window with a link to set up an identity?

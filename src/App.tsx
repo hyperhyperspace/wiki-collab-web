@@ -11,14 +11,16 @@ import { ObjectState, useObjectState } from '@hyper-hyper-space/react';
 import SpaceLauncher from './pages/SpaceLauncher';
 // import WikiSpaceView from './components/WikiSpaceView';
 import Launcher from './Launcher';
-import SpaceFrame from './pages/SpaceFrame';
+import SpaceFrame, { SpaceComponent } from './pages/SpaceFrame';
+import { WikiSpace } from '@hyper-hyper-space/wiki-collab';
 
 function App(props: { launcher: Launcher }) {
   const spaces = useObjectState(props.launcher.spaces) as ObjectState<
-    MutableArray<Hash>
+    MutableArray<WikiSpace>
   >;
 
   const confReady = props.launcher && spaces && spaces.value;
+  const {launcher} = props;
 
   return (
     <Fragment>
@@ -29,11 +31,21 @@ function App(props: { launcher: Launcher }) {
         <ThemeProvider theme={lightTheme}>
           {/* <HyperBrowserEnv homes={homes} config={props.config}> */}
           <Routes>
-            <Route path="/" element={<SpaceLauncher />} />
+            <Route path="/" element={<SpaceLauncher launcher={launcher} visible={true} />} />
             <Route
               path="space/:hash"
-              element={<SpaceFrame launcher={props.launcher} />}
-            ></Route>
+              element={
+                  <SpaceFrame launcher={props.launcher} />
+              }
+            >
+              <Route path="*" element={<SpaceComponent/>} />
+              <Route path="" element={<SpaceComponent/>} />
+            </Route>
+            <Route path="space/:hash" element={<SpaceFrame launcher={props.launcher} />}> 
+                <Route path="*/launcher" element={<SpaceLauncher launcher={launcher} visible={true} />}></Route>
+                <Route path="*" element={<SpaceComponent/>} />
+                <Route path="" element={<SpaceComponent/>} />
+             </Route>
           </Routes>
           {/* </HyperBrowserEnv> */}
         </ThemeProvider>
@@ -41,6 +53,7 @@ function App(props: { launcher: Launcher }) {
       <div>
         <p>Loading...</p>
       </div>
+      {/* <Outlet context= */}
     </Fragment>
   );
 }

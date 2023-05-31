@@ -23,13 +23,25 @@ type SpaceContext = {
   space?: WikiSpace;
   resources?: Resources;
   launcher: Launcher;
+  author?: Identity;
 };
 
 function SpaceFrame(props: { launcher: Launcher }) {
   const params = useParams();
 
-  const spaceEntryPointHash = decodeURIComponent(params.hash as Hash) as Hash;
 
+  const spaceEntryPointHash = decodeURIComponent(params.hash as Hash) as Hash;
+  // console.log('space entry point hash', spaceEntryPointHash)
+
+    // const [foundLocalCopy, setFoundLocalCopy] = useState<boolean>(false);
+    // const [homeHash, setHomeHash] = useState<Hash>();
+    // const [home, setHome] = useState<Home|undefined>(undefined);
+
+    // const [initParams, setInitParams] = useState<InitParams|undefined>(undefined);
+
+    // const initResult = useObjectDiscoveryIfNecessary<HashedObject & SpaceEntryPoint>(initParams?.resourcesForDiscovery, initParams?.hash, initParams?.knownEntryPoint);
+
+    // const spaceEntryPointHash = decodeURIComponent(params.hash as Hash) as Hash;
   const [spaceEntryPoint, setSpaceEntryPoint] = useState<
     (HashedObject & SpaceEntryPoint & WikiSpace) | undefined
   >(undefined);
@@ -46,8 +58,12 @@ function SpaceFrame(props: { launcher: Launcher }) {
       setSpaceEntryPoint(
         (await spaceResources?.store.load(spaceEntryPointHash)) as WikiSpace,
       );
+      
+      console.log('space entry point', spaceEntryPoint)
+      console.log('space resources', spaceResources)
     };
 
+    console.log('initing space frame')
     init();
 
     return () => {
@@ -56,24 +72,32 @@ function SpaceFrame(props: { launcher: Launcher }) {
 
       spaceEntryPoint?.dontWatchForChanges();
     };
-  }, [spaceEntryPointHash]);
+  }, []);
 
   const spaceContext: SpaceContext = {
     space: spaceEntryPoint,
     resources: spaceResources,
     launcher: props.launcher,
+    author: props.launcher.getAuthor(),
   };
+
+  console.log('rendering space frame', spaceContext)
 
   return (
     <Fragment>
+      LOL
       <Outlet context={spaceContext} />
     </Fragment>
   );
 }
 
 export const SpaceComponent = () => {
-  const { space: wiki } = useOutletContext() as SpaceContext;
-  return <WikiSpaceView entryPoint={wiki!} />;
+  const { space } = useOutletContext<SpaceContext>() as SpaceContext;
+  // const basePath = '/space/' + encodeURIComponent(wiki.getLastHash());
+  return <>
+    hmm
+    <WikiSpaceView entryPoint={space!} />;
+  </>
 };
 
 export type { SpaceContext };

@@ -42,6 +42,7 @@ import Menu from '@mui/material/Menu';
 import { size, sortBy } from 'lodash-es';
 // import InfoDialog from '../../../components/InfoDialog';
 import { MemberInfo, ReadInfo, WriteInfo } from './InfoTips';
+import { SpaceContext } from '../pages/SpaceFrame';
 
 const ITEM_HEIGHT = 48;
 const ADD_TO_MODERATORS = 'Add to moderators';
@@ -50,8 +51,8 @@ const REMOVE_FROM_MEMBERS = 'Remove from members';
 
 export function MemberActionMenu(props: { memberId: Identity }) {
   const { memberId } = props;
-  const { spaceContext, wiki } = useOutletContext<WikiContext>();
-  const author = spaceContext?.launcher?.getAuthor();
+  const { wiki, author } = useOutletContext<WikiContext>();
+  // const author = spaceContext?.launcher?.getAuthor();
   const membersState = useObjectState(wiki?.permissionLogic?.members);
   const moderatorsState = useObjectState(wiki?.permissionLogic?.moderators);
   const owners = wiki.owners!;
@@ -170,7 +171,7 @@ function PermFlagToggle(props: {
   name: string;
   info?: JSX.Element;
 }) {
-  const { spaceContext } = useOutletContext<WikiContext>();
+  const spaceContext= useOutletContext<SpaceContext>();
   const flagState = useObjectState(props.flag);
   const author = spaceContext?.launcher?.getAuthor();
   const [infoTipOpen, setInfoTipOpen] = React.useState(false);
@@ -301,7 +302,7 @@ function MemberList() {
 }
 
 export default function WikiSpacePermissionSettings() {
-  const { spaceContext, wiki } = useOutletContext<WikiContext>();
+  const { wiki } = useOutletContext<WikiContext>();
   const membersState = useObjectState(wiki?.permissionLogic?.members);
   const owners = wiki.owners!;
   const ids = [...owners.values()!, ...membersState?.value?.values()!];
