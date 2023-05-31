@@ -16,6 +16,7 @@ import Launcher from '../Launcher';
 
 import { WikiSpace } from '@hyper-hyper-space/wiki-collab';
 import WikiSpaceView from '../components/WikiSpaceView';
+import { Typography } from '@mui/material';
 
 // type InitParams = {hash?: Hash, resourcesForDiscovery?: Resources, knownEntryPoint?: HashedObject & SpaceEntryPoint};
 
@@ -54,25 +55,29 @@ function SpaceFrame(props: { launcher: Launcher }) {
   useEffect(() => {
     const init = async () => {
       // load a new IDB backend if we don't have one already
-      setSpaceResources(await Launcher.initSpaceResources(spaceEntryPointHash));
-      setSpaceEntryPoint(
-        (await spaceResources?.store.load(spaceEntryPointHash)) as WikiSpace,
-      );
+
+      console.log('loading hash ' + spaceEntryPointHash);
+
+      const resources  = await Launcher.initSpaceResources(spaceEntryPointHash);
+      const entryPoint = (await resources.store.load(spaceEntryPointHash)) as WikiSpace;
+      setSpaceResources(resources);
+      setSpaceEntryPoint(entryPoint);
       
-      console.log('space entry point', spaceEntryPoint)
-      console.log('space resources', spaceResources)
+      console.log('space entry point', entryPoint)
+      console.log('space resources', resources)
     };
 
     console.log('initing space frame')
     init();
 
     return () => {
+      console.log('shutting down the wiki ' + spaceEntryPointHash);
       spaceResources?.mesh.shutdown();
       spaceResources?.store.close();
 
       spaceEntryPoint?.dontWatchForChanges();
     };
-  }, []);
+  }, [props.launcher]);
 
   const spaceContext: SpaceContext = {
     space: spaceEntryPoint,
@@ -94,9 +99,16 @@ function SpaceFrame(props: { launcher: Launcher }) {
 export const SpaceComponent = () => {
   const { space } = useOutletContext<SpaceContext>() as SpaceContext;
   // const basePath = '/space/' + encodeURIComponent(wiki.getLastHash());
+  console.log('RENDERING SPACE COMP')
   return <>
-    hmm
-    <WikiSpaceView entryPoint={space!} />;
+    {space === undefined && 
+      <Typography>Loading...</Typography>
+    }
+    {space !== undefined &&
+      <><Typography>IN</Typography>
+      <WikiSpaceView entryPoint={space} />
+      </>
+    }
   </>
 };
 

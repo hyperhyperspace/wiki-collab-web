@@ -13,13 +13,17 @@ export default function SpaceLauncher(props: { visible: boolean, launcher: Launc
     const creator = Identity.fromKeyPair({}, kp);
     console.log('Generated wiki creator', creator);
     const space = await new WikiSpace([creator].values());
-    await space.init();
+    //await space.init(); <-- this get called on the constructor automatically :-)
     
     const spaceStore = await Launcher.initSpaceStore(space);
     space.setStore(spaceStore);
     
     const spaceResources = await Launcher.initSpaceResources(space);
     space.setResources(spaceResources);
+
+    await space.title?.setValue('Unnamed wiki');
+    await space.createWelcomePage("your new wiki", creator);
+
     space.save();
 
     launcher.spaces?.push(space, launcher.getAuthor()!);
