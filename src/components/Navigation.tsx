@@ -1,4 +1,4 @@
-import { MutationEvent } from '@hyper-hyper-space/core';
+import { Authorization, MutationEvent } from '@hyper-hyper-space/core';
 import { useObjectState } from '@hyper-hyper-space/react';
 import { Page, PageArray } from '@hyper-hyper-space/wiki-collab';
 import { Delete, DragIndicator } from '@mui/icons-material';
@@ -42,7 +42,7 @@ function PageListItem(props: {
   const pageName = useObjectState(page.name)?.getValue()?.getValue();
   const pageArrayState = useObjectState(pageArray);
   const { nav } = useOutletContext<WikiContext>();
-  const { launcher } = useOutletContext<SpaceContext>();
+  const { launcher, author } = useOutletContext<SpaceContext>();
   return (
     <ListItemButton
       selected={pageNameFromRoute === pageName}
@@ -94,7 +94,7 @@ function PageListItem(props: {
                 evt.stopPropagation();
                 pageArrayState?.value?.deleteElement(
                   page,
-                  launcher?.getAuthor(),
+                  author,
                 );
                 pageArrayState?.value?.save();
                 if (page.name === pageName) {
@@ -120,7 +120,7 @@ function PageListItem(props: {
 function Navigation(props: { width: string; redirect?: boolean }) {
   const { nav, wiki } = useOutletContext<WikiContext>();
   // console.log('wiki', wiki, 'nav', nav)
-  const { launcher } = useOutletContext<SpaceContext>();
+  const { launcher, author } = useOutletContext<SpaceContext>();
   const { pageName } = useParams();
   const { pathname } = useLocation();
   const onSettingsPage = pathname.includes('/settings/');
@@ -143,7 +143,7 @@ function Navigation(props: { width: string; redirect?: boolean }) {
       return;
     }
 
-    wiki.movePage(from, to, launcher?.getAuthor()!);
+    wiki.movePage(from, to, author!);
   };
 
   useEffect(() => {
@@ -151,7 +151,7 @@ function Navigation(props: { width: string; redirect?: boolean }) {
 
     pageArrayState
       ?.getValue()
-      ?.canInsert(undefined, 0, launcher?.getAuthor())
+      ?.canInsert(undefined, 0, author!)
       .then((canInsert: boolean) => {
         if (cancel) return;
         setCanEditPageArray(canInsert);

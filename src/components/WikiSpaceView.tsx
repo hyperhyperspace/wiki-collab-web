@@ -24,6 +24,8 @@ import WikiSpacePagesForRoute from './PagesForRoute';
 import WikiSpaceSettingsPage from './SettingsPage';
 import './WikiSpaceView.css';
 import { Identity, Resources } from '@hyper-hyper-space/core';
+import Launcher from '../Launcher';
+import SpaceLauncher from '../pages/SpaceLauncher';
 
 type WikiNav = {
   goToPage: (pageName: string) => void;
@@ -40,7 +42,7 @@ type WikiContext = {
 };
 
 function WikiSpaceView(props: { entryPoint: WikiSpace; basePath?: string }) {
-  const {author, resources} = useOutletContext<SpaceContext>();
+  const {author, resources, launcher} = useOutletContext<SpaceContext>();
   console.log('WikiSpaceView', author, resources, props.entryPoint)
   const { basePath } = { basePath: '' };
 
@@ -250,6 +252,14 @@ function WikiSpaceView(props: { entryPoint: WikiSpace; basePath?: string }) {
           element={
             <Frame title="Settings">
               <WikiSpaceSettingsPage />
+            </Frame>
+          }
+        />
+        <Route
+          path="launcher"
+          element={
+            <Frame title="Launcher">
+              <SpaceLauncher launcher={launcher!} visible={true}/>
             </Frame>
           }
         />

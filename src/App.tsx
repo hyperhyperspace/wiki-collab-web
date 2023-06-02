@@ -39,15 +39,9 @@ function App(props: { launcher: Launcher }) {
               }
             >
               <Route path="*" element={<SpaceComponent/>} />
-              <Route path="" element={<SpaceComponent/>} />
+              <Route index element={<SpaceComponent/>} />
+              {/* <Route path="" element={<SpaceLauncher launcher={launcher} visible={true} />} /> */}
             </Route>
-            <Route path="space/:hash" element={<SpaceFrame launcher={props.launcher} />}> 
-                
-                <Route path="*/launcher" element={<SpaceLauncher launcher={launcher} visible={true} />}></Route>
-                <Route index element={<SpaceComponent/>} />
-                <Route path="*" element={<SpaceComponent/>} />
-             
-             </Route>
           </Routes>
           {/* </HyperBrowserEnv> */}
         </ThemeProvider>

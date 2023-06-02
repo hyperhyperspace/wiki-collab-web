@@ -83,7 +83,7 @@ function SpaceFrame(props: { launcher: Launcher }) {
     space: spaceEntryPoint,
     resources: spaceResources,
     launcher: props.launcher,
-    author: props.launcher.getAuthor(),
+    author: spaceEntryPoint?.owners?.values().next().value,
   };
 
   console.log('rendering space frame', spaceContext)

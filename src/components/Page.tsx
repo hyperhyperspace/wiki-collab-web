@@ -34,7 +34,7 @@ function WikiSpacePage(props: { page: Page }) {
   // const { pageName } = useParams();
   const { page } = props;
   const { wiki } = useOutletContext<WikiContext>();
-  const { launcher } = useOutletContext<SpaceContext>();
+  const { launcher, author } = useOutletContext<SpaceContext>();
 
   const wikiTitleState = useObjectState<WikiSpace>(wiki, {
     filterMutations: (ev: MutationEvent) => ev.emitter === wiki?.title,
@@ -60,7 +60,7 @@ function WikiSpacePage(props: { page: Page }) {
 
   useEffect(() => {
     let cancel = false;
-    page?.canUpdate(launcher?.getAuthor())?.then(canUpdate => {
+    page?.canUpdate(author)?.then(canUpdate => {
       if (cancel) return;
       setEditable(canUpdate);
     });
@@ -89,7 +89,7 @@ function WikiSpacePage(props: { page: Page }) {
       return;
     }
 
-    page?.moveBlock(from, to, launcher?.getAuthor()!);
+    page?.moveBlock(from, to, author);
   };
 
   const startedEditing = () => {
@@ -105,14 +105,14 @@ function WikiSpacePage(props: { page: Page }) {
   };
 
   const addTextBlock = (idx?: number) => {
-    console.log('adding text block with author:', launcher?.getAuthor(), '...');
-    console.log('hasKeyPair()=', launcher?.getAuthor()?.hasKeyPair(), '...');
+    console.log('adding text block with author:', author, '...');
+    console.log('hasKeyPair()=', author?.hasKeyPair(), '...');
 
     console.log('before adding block ' + Date.now());
     const newBlock = page?.addBlockNoSave(
       idx,
       undefined,
-      (launcher?.getAuthor() as Identity)!,
+      author as Identity,
     );
     console.log('after adding block ' + Date.now());
     newBlock
@@ -132,10 +132,10 @@ function WikiSpacePage(props: { page: Page }) {
   const addImageBlock = (dataUrl: string, idx?: number) => {
     console.log('CALLED ADD IMAGE BLOCK');
     page
-      ?.addBlock(idx, BlockType.Image, launcher?.getAuthor() as Identity)
+      ?.addBlock(idx, BlockType.Image, author as Identity)
       .then(async (b: Block) => {
         console.log('SET IMAGE VALUE TO ', dataUrl);
-        await b.setValue(dataUrl, launcher?.getAuthor() as Identity);
+        await b.setValue(dataUrl, author as Identity);
         await b.save();
       });
   };
@@ -175,7 +175,7 @@ function WikiSpacePage(props: { page: Page }) {
               idx={index}
               showAddBlockMenu={showAddBlockMenu}
               removeBlock={() =>
-                page?.removeBlock(block, launcher?.getAuthor())
+                page?.removeBlock(block, author)
               }
               focusOnBlockWithHash={focusOnBlockWithHash}
               addBlockAfter={addBlockAfter}

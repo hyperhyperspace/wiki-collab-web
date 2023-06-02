@@ -64,8 +64,8 @@ function WikiSpaceBlock(props: {
   focusOnAdjacentBlock?: (block: Block, distance?: number) => void;
 }) {
   // const { spaceContext } = useOutletContext<WikiContext>();
-  const { launcher, resources } = useOutletContext<SpaceContext>();
-  const selfAuthor = launcher?.getAuthor()!;
+  const { launcher, resources, author } = useOutletContext<SpaceContext>();
+  const selfAuthor = author!;
   const blockState = useObjectState(props.block, { debounceFreq: 250 });
   const blockContentsState = useObjectState(props.block, { debounceFreq: 250 });
   const [rejectedEdit, setRejectedEdit] = useState<string>();
