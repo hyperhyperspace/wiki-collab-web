@@ -146,11 +146,14 @@ function SpaceFrame(props: { launcher: Launcher }) {
     }
   }, [spaceResources, initResult]);
 
+  const spaceAuthor = spaceEntryPoint?.owners?.values().next().value as Identity;
+  const launcherAuthor = props.launcher?.getAuthor() as Identity; 
+
   const spaceContext: SpaceContext = {
     space: spaceEntryPoint,
     resources: spaceResources,
     launcher: props.launcher,
-    author: spaceEntryPoint?.owners?.values().next().value,
+    author: spaceAuthor?.hasKeyPair() ? spaceAuthor : launcherAuthor,
   };
 
   console.log('rendering space frame', spaceContext);
