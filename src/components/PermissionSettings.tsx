@@ -173,7 +173,7 @@ function PermFlagToggle(props: {
 }) {
   const spaceContext= useOutletContext<SpaceContext>();
   const flagState = useObjectState(props.flag);
-  const author = spaceContext?.launcher?.getAuthor();
+  const author = spaceContext.author!;
   const [infoTipOpen, setInfoTipOpen] = React.useState(false);
 
   const handleChange = async (event: SelectChangeEvent) => {

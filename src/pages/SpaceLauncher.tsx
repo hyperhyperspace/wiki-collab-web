@@ -17,6 +17,7 @@ export default function SpaceLauncher(props: { visible: boolean, launcher: Launc
     //await space.init(); <-- this get called on the constructor automatically :-)
     
     const spaceStore = await Launcher.initSpaceStore(space);
+    spaceStore.save(kp);
     space.setStore(spaceStore);
     
     const spaceResources = await Launcher.initSpaceResources(space);
