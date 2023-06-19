@@ -1,8 +1,9 @@
-import { Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Launcher from "../Launcher";
 import { Identity, MutableArray, RSAKeyPair } from "@hyper-hyper-space/core";
 import { WikiSpace } from "@hyper-hyper-space/wiki-collab";
 import { useNavigate } from "react-router";
+import SiteTitle from "../components/SiteTitle";
 
 
 export default function SpaceLauncher(props: { visible: boolean, launcher: Launcher }) {
@@ -36,28 +37,45 @@ export default function SpaceLauncher(props: { visible: boolean, launcher: Launc
   
   const navigate = useNavigate();
 
-  return <>
-    { props.visible && <div>
-      <Button onClick={newSpace}>New space...</Button>
-      <h5>or</h5>
-      <Typography
-        variant="button"
-      >Open a saved space...</Typography>
-      <ul>
-        {[...(launcher.spaces as MutableArray<WikiSpace>).values()].map((space) => {
-          return <li key={space.getLastHash()}>
-            <Button
-              onClick={() => {
-                navigate('/space/' + encodeURIComponent(space.getLastHash()));
-              }}
-            >{space.getLastHash()}</Button>
-          </li>;
-        })}
-      </ul>
-      <h5>or</h5>
-      <Button>
-        Import an existing space...
-      </Button>
-    </div> }
-  </>;
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+      }}
+    >
+      <SiteTitle />
+      {props.visible && (
+          <>
+          <Button onClick={newSpace} variant="contained">Create new space...</Button>
+          <h5>or</h5>
+          <Typography variant="button">Open a saved space</Typography>
+          <ul>
+            {[...(launcher.spaces as MutableArray<WikiSpace>).values()].map(
+              (space) => {
+                return (
+                  <li key={space.getLastHash()}>
+                    <Button
+                      onClick={() => {
+                        navigate(
+                          "/space/" + encodeURIComponent(space.getLastHash())
+                        );
+                      }}
+                    >
+                      {space.getLastHash()}
+                    </Button>
+                  </li>
+                );
+              }
+            )}
+          </ul>
+          <h5>or</h5>
+          <Button variant="contained">Import an existing space</Button>
+          </>
+      )}
+    </Box>
+  );
 }
