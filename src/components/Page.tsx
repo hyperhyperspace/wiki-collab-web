@@ -224,6 +224,8 @@ function WikiSpacePage(props: { page: Page }) {
     }
   };
 
+  // console.log('page contents: ', blocksListState?.getValue());
+
   return (
     <>
       {/* <div style={{ padding: '90px 1rem', height: '100%', width: '100%', display: 'flex', justifyContent: 'center' }}> */}
@@ -253,7 +255,7 @@ function WikiSpacePage(props: { page: Page }) {
                   <Stack
                     direction="row"
                     spacing={3}
-                    style={{ alignItems: 'baseline' }}
+                    style={{ alignItems: 'baseline', marginTop: '2rem', justifyContent: 'center' }}
                   >
                     <Typography>This page looks empty.</Typography>
                     <Button

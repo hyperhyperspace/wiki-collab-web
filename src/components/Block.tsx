@@ -185,10 +185,38 @@ function WikiSpaceBlock(props: {
       Underline,
       BlockEditorShortcuts.configure({
         shortcuts: {
-          Enter: () => {
-            console.log('enter was at ' + Date.now());
-            props.addBlockAfter(props.block);
-            return true;
+          Enter: function() {
+            const $from = this.editor.state.selection.$from;
+            const node = $from.node($from.depth);
+
+            if (node && node.type.name === 'codeBlock') {
+              return false;
+            } else {
+              props.addBlockAfter(props.block);
+              return true;
+            }
+          },
+          'Shift-Enter': function() {
+            const $from = this.editor.state.selection.$from;
+            const node = $from.node($from.depth);
+
+            if (node && node.type.name === 'codeBlock') {
+              props.addBlockAfter(props.block);
+              return true;
+            } else {
+              return false;
+            }
+          },
+          'Control-Enter': function() {
+            const $from = this.editor.state.selection.$from;
+            const node = $from.node($from.depth);
+
+            if (node && node.type.name === 'codeBlock') {
+              props.addBlockAfter(props.block);
+              return true;
+            } else {
+              return false;
+            }
           },
           Backspace: function () {
             const selection = this.editor.view.state.selection;
