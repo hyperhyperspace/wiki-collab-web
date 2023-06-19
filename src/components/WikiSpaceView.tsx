@@ -28,7 +28,7 @@ import Launcher from '../Launcher';
 import SpaceLauncher from '../pages/SpaceLauncher';
 
 type WikiNav = {
-  goToPage: (pageName: string) => void;
+  goToPage: (pageName: string, rewrite?: boolean) => void;
   goToAddPage: () => void;
   goToIndex: () => void;
   goToPermissionSettings: () => void;
@@ -59,11 +59,12 @@ function WikiSpaceView(props: { entryPoint: WikiSpace; basePath?: string }) {
 
   const navigate = useNavigate();
 
-  const goToPage = (pageName: string) => {
+  const goToPage = (pageName: string, replace = false) => {
     navigate(
         // basePath +
         'contents/' +
         encodeURIComponent(pageName),
+        { replace }
     );
   };
 
