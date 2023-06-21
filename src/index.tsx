@@ -55,7 +55,7 @@ const main = async () => {
   launcher.init();
   await launcherStore.save(launcher);
   await launcher.loadAndWatchForChanges();
-  await launcher.spaces?.loadAndWatchForChanges();
+  // await launcher.spaces?.loadAndWatchForChanges();
 
   ReactDOM.render(
     <React.StrictMode>

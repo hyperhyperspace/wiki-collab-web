@@ -1,9 +1,7 @@
 import {
   Hash,
   HashedObject,
-  IdbBackend,
   Identity,
-  MutableSet,
   Resources,
   SpaceEntryPoint,
 } from '@hyper-hyper-space/core';

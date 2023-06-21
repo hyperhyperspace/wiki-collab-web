@@ -1,18 +1,19 @@
-import { Authorization, MutationEvent } from '@hyper-hyper-space/core';
+import { MutationEvent } from '@hyper-hyper-space/core';
 import { useObjectState } from '@hyper-hyper-space/react';
 import { Page, PageArray } from '@hyper-hyper-space/wiki-collab';
-import { Delete, DragIndicator } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
+// import SettingsIcon from '@mui/icons-material/Settings';
+
+
 import {
   Box,
+  Button,
   Divider,
-  Drawer,
-  Icon,
   IconButton,
   InputAdornment,
   List,
   ListItem,
   ListItemButton,
-  Paper,
   Stack,
   TextField,
   Tooltip,
@@ -26,7 +27,7 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
-import { useLocation, useOutletContext, useParams } from 'react-router';
+import { useLocation, useNavigate, useOutletContext, useParams } from 'react-router';
 import './Navigation.css';
 import { WikiContext } from './WikiSpaceView';
 import { SpaceContext } from '../pages/SpaceFrame';
@@ -43,6 +44,7 @@ function PageListItem(props: {
   const pageArrayState = useObjectState(pageArray);
   const { nav } = useOutletContext<WikiContext>();
   const { launcher, author } = useOutletContext<SpaceContext>();
+  // const navigate = useNavigate();
   return (
     <ListItemButton
       selected={pageNameFromRoute === pageName}
@@ -146,6 +148,8 @@ function Navigation(props: { width: string; redirect?: boolean }) {
     wiki.movePage(from, to, author!);
   };
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     let cancel = false;
 
@@ -224,7 +228,11 @@ function Navigation(props: { width: string; redirect?: boolean }) {
         }}
         dense
       >
-        <ListItem>
+        <ListItemButton
+        // navigate to the index page
+          // selected={pageName === undefined}
+          onClick={() => navigate('/')}
+        >
           <Typography
             variant="h5"
             style={{
@@ -234,9 +242,23 @@ function Navigation(props: { width: string; redirect?: boolean }) {
                   : 'unset',
             }}
           >
-            {wikiState?.getValue()?.title?.getValue() || 'Fetching title...'}
+            {wikiState?.value?.title?.getValue() || 'Fetching title...'}
           </Typography>
-        </ListItem>
+        </ListItemButton>
+      <Divider />
+        {canEditPageArray && (
+          <ListItemButton
+            selected={onSettingsPage}
+            onClick={nav.goToPermissionSettings}
+            className="page-tab"
+          >
+            <Typography className={onSettingsPage ? 'currently-selected' : ''}>
+              Settings
+            </Typography>
+          </ListItemButton>
+        )}
+      </List>
+      <Divider />
         <ListItem>
           <TextField
             placeholder="Filter pages"
@@ -263,18 +285,6 @@ function Navigation(props: { width: string; redirect?: boolean }) {
             }}
           ></TextField>
         </ListItem>
-        {canEditPageArray && (
-          <ListItemButton
-            selected={onSettingsPage}
-            onClick={nav.goToPermissionSettings}
-            className="page-tab"
-          >
-            <Typography className={onSettingsPage ? 'currently-selected' : ''}>
-              Settings
-            </Typography>
-          </ListItemButton>
-        )}
-      </List>
       <Divider />
       {/* saved pages */}
       <DragDropContext onDragEnd={onDragEnd}>

@@ -215,7 +215,7 @@ function WikiSpaceView(props: { entryPoint: WikiSpace; basePath?: string }) {
                 direction="row"
                 style={{ height: '100%', width: '100%' }}
                 spacing="5rem"
-                sx={{ maxWidth: 'lg' }}
+                // sx={{ maxWidth: 'lg' }}
               >
                 <Navigation width={navigationWidth} redirect />
                 <Paper style={{ width: contentWidth }}>

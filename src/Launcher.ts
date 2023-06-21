@@ -84,6 +84,19 @@ class Launcher extends HashedObject {
 
     return mesh;
   }
+  
+  // async startSync() {
+  //   console.log('start sync');
+  //   [...this.spaces?.values() || []].forEach((space) => {
+  //    space.loadAndWatchForChanges();
+  //   }) 
+  // }
+  
+  // async stopSync() {
+  //   [...this.spaces?.values() || []].forEach((space) => {
+  //    space.loadAndWatchForChanges();
+  //   })
+  // }
 
   static async initSpaceResources(
     spaceEntryPoint: HashedObject | Hash,
