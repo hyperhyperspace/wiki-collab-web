@@ -43,6 +43,7 @@ import { size, sortBy } from 'lodash-es';
 // import InfoDialog from '../../../components/InfoDialog';
 import { MemberInfo, ReadInfo, WriteInfo } from './InfoTips';
 import { SpaceContext } from '../pages/SpaceFrame';
+import InfoDialog from './InfoDialog';
 
 const ITEM_HEIGHT = 48;
 const ADD_TO_MODERATORS = 'Add to moderators';
@@ -224,7 +225,7 @@ function PermFlagToggle(props: {
         {props.name}
       </Link>
       :
-      {/* <InfoDialog content={props.info!} title={`Who can ${props.name}?`} open={infoTipOpen} onClose={() => setInfoTipOpen(false)}/> */}
+      <InfoDialog content={props.info!} title={`Who can ${props.name}?`} open={infoTipOpen} onClose={() => setInfoTipOpen(false)}/>
     </Typography>
   ) : (
     <Typography>Who can {props.name}:</Typography>
@@ -235,8 +236,8 @@ function PermFlagToggle(props: {
       <FormControl fullWidth>
         <Select value={flag} onChange={handleChange}>
           <MenuItem value={PermFlagEveryone}>Everybody</MenuItem>
-          <MenuItem value={PermFlagMembers}>Members</MenuItem>
-          <MenuItem value={PermFlagModerators}>Moderators</MenuItem>
+          <MenuItem disabled={true} value={PermFlagMembers}>Members</MenuItem>
+          <MenuItem disabled={true} value={PermFlagModerators}>Moderators</MenuItem>
           <MenuItem value={PermFlagOwners}>Owners</MenuItem>
         </Select>
       </FormControl>
@@ -264,15 +265,15 @@ function MemberList() {
 
   return (
     <Box>
-      <Link
+      {/* <Link
         component="button"
         variant="overline"
         onClick={() => setInfoTipOpen(true)}
       >
         Members
-      </Link>
-      {/* <InfoDialog content={MemberInfo} title={`Who are members?`} open={infoTipOpen} onClose={() => setInfoTipOpen(false)}/> */}
-      <Divider />
+      </Link> */}
+      <InfoDialog content={MemberInfo} title={`Who are members?`} open={infoTipOpen} onClose={() => setInfoTipOpen(false)}/>
+      {/* <Divider /> */}
       <Box>
         <List>
           {[...owners.values()!].map(id => (

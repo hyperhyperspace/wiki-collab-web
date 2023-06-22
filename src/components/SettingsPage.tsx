@@ -1,82 +1,42 @@
-import { Stack } from '@mui/material';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import { ObjectState, useObjectState } from '@hyper-hyper-space/react';
+import { WikiSpace } from '@hyper-hyper-space/wiki-collab';
+import { FormControl, Input, InputLabel, Stack, TextField } from '@mui/material';
 import * as React from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useOutletContext } from 'react-router';
 import WikiSpacePermissionSettings from './PermissionSettings';
+import { WikiContext } from './WikiSpaceView';
 
-const tabs = [
-  {
-    label: 'Permissions',
-    path: 'permissions',
-    component: <WikiSpacePermissionSettings />,
-  },
-];
+function TitleSetting() {
+  const { wiki } = useOutletContext<WikiContext>();
+  const wikiState = useObjectState(wiki) as ObjectState<WikiSpace>;
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  tabPath: string;
-  value: string;
-}
+  // const [canEdit, setCanEdit] = React.useState<boolean>(false);
 
-function TabPanel(props: TabPanelProps) {
-  const { children, value, tabPath, ...other } = props;
+  // wikiState.value?.title
+  //   ?.value?.canUpdate(selfAuthor)!
+  //   .then((canUpdate: boolean) => {
+  //     setCanEdit(canUpdate);
+  //   });
 
   return (
-    <div
-      role="tabpanel"
-      hidden={value !== tabPath}
-      id={`settings-panel-${tabPath}`}
-      aria-labelledby={`settings-tab-${tabPath}`}
-      {...other}
-    >
-      {
-        value === tabPath &&
-          // <Box sx={{ p: 3 }}>
-          children
-        // </Box>
-      }
-    </div>
+    <>
+      <TextField
+        id="title"
+        label="Title"
+        value={wikiState.value?.title?.getValue()}
+        onChange={e =>
+          wikiState.value && wikiState.value.title?.setValue(e.target.value)
+        }
+      />
+    </>
   );
 }
 
-function a11yProps(index: number) {
-  return {
-    'aria-controls': `settings-panel-${index}`,
-    id: `settings-tab-${index}`,
-  };
-}
-
 export default function WikiSpaceSettingsPage() {
-  const navigate = useNavigate();
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    navigate(newValue);
-  };
-
-  const params = useParams();
-
-  console.log('switching to', params);
-
   return (
     <Stack>
-      {/* <Box sx={{ borderBottom: 1, borderColor: 'divider' }}> */}
-      <Tabs
-        onChange={handleChange}
-        style={{ display: 'none' }}
-        aria-label="basic tabs example"
-        value={params['*']!}
-      >
-        {tabs.map(({ label, path }, key) => (
-          <Tab key={key} value={path} label={label!} {...a11yProps(key)} />
-        ))}
-      </Tabs>
-      {/* </Box> */}
-      {tabs.map(({ label, path, component }, key) => (
-        <TabPanel value={params['*']!} tabPath={path!} key={key}>
-          {component}
-        </TabPanel>
-      ))}
+      <TitleSetting />
+      <WikiSpacePermissionSettings />
     </Stack>
   );
 }
